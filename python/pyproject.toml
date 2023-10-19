@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "algorithms"
+version = "0.0.1"
+authors = [{name = "Toncho Zhelev", email = "toncho.zhelev@gmail.com"}]
+requires-python = ">=3.11"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+]
+
+[tool.mypy]
+python_version = "3.11"
+packages = [
+    "algorithms",
+    "tests",
+]
+exclude = []
+disable_error_code = [
+    "has-type",  # Ignore when variable types cannot be determined.
+]
+follow_imports = "silent"
