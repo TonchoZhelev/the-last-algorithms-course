@@ -11,9 +11,11 @@ class SNode(Generic[T]):
 
 class Stack(Generic[T]):
 
-    def __init__(self) -> None:
+    def __init__(self, *args) -> None:
         self.head: SNode[T] | None = None
         self._length: int = 0
+        for arg in args:
+            self.push(arg)
 
     @property
     def length(self) -> int:
@@ -31,19 +33,26 @@ class Stack(Generic[T]):
 
     def pop(self) -> T | None:
         head = self.head
-       
+
         if self._length == 0:
             return None
-        elif self._length == 1:
-            self.head = None
         else:
+            head = self.head
             self.head = head.prev if head else None
-        
+
         self._length = self._length - 1
         return head.value if head else None
 
 
-
     def peek(self) -> T | None:
         return self.head.value if self.head is not None else None
+
+    def __iter__(self):
+        node = self.head
+        while node:
+            yield node.value
+            node = node.prev
+
+    def __repr__(self) -> str:
+        return f'Stack({[v for v in self]})'
 
