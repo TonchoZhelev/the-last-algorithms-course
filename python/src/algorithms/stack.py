@@ -17,8 +17,7 @@ class Stack(Generic[T]):
         for arg in args:
             self.push(arg)
 
-    @property
-    def length(self) -> int:
+    def __len__(self) -> int:
         return self._length
 
     def push(self, item: T) -> None:

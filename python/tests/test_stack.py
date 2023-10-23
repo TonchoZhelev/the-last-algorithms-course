@@ -9,7 +9,7 @@ def test_stack():
     list.push(9)
 
     assert list.pop() == 9
-    assert list.length == 2
+    assert len(list) == 2
 
     list.push(11)
     assert list.pop() == 11
@@ -20,5 +20,5 @@ def test_stack():
 
     list.push(69)
     assert list.peek() == 69
-    assert list.length == 1
+    assert len(list) == 1
 
