@@ -1,20 +1,15 @@
 from dataclasses import dataclass, astuple
 
 @dataclass(slots=True)
-class Vec:
+class Point:
     x: int = 0
     y: int = 0
 
-    def __iter__(self):
-        return iter(astuple(self))
-
-Point = Vec
-
 directions = [
-    Vec(-1, 0),
-    Vec( 1, 0),
-    Vec( 0,-1),
-    Vec( 0, 1),
+    (-1, 0),
+    ( 1, 0),
+    ( 0,-1),
+    ( 0, 1),
 ]
 
 def walk(maze: list[str], wall: str,\
