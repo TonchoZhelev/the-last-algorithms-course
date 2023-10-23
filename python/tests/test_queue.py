@@ -9,7 +9,7 @@ def test_queue():
     list.enqueue(9)
 
     assert list.deque() == 5
-    assert list.length == 2
+    assert len(list) == 2
 
     list.enqueue(11)
 
@@ -18,9 +18,9 @@ def test_queue():
     assert list.peek() == 11
     assert list.deque() == 11
     assert list.deque() is None
-    assert list.length == 0
+    assert len(list) == 0
 
     list.enqueue(69)
 
     assert list.peek() == 69
-    assert list.length == 1
+    assert len(list) == 1

@@ -16,11 +16,14 @@ class Queue(Generic[T]):
     """A generic queue implementation"""
 
     def __init__(self, *args: T):
-        self.length: int = 0
+        self._length: int = 0
         self.head: QNode[T] | None = None
         self.tail: QNode[T] | None = None
         for a in args:
             self.enqueue(a)
+
+    def __len__(self) -> int:
+        return self._length
 
     def enqueue(self, item: T) -> None:
         node = QNode(item)
@@ -32,7 +35,7 @@ class Queue(Generic[T]):
             self.tail.next = node
             self.tail = node
 
-        self.length += 1
+        self._length += 1
 
     def deque(self) -> T | None:
         if self.head is None:
@@ -44,7 +47,7 @@ class Queue(Generic[T]):
         if self.head is None:
             self.tail = None
 
-        self.length -= 1
+        self._length -= 1
 
         return head.value
 
