@@ -2,15 +2,16 @@ from algorithms.doubly_linked_list import DoublyLinkedList
 
 
 def test_doubly_linked_list():
-    breakpoint()
     list = DoublyLinkedList[int]()
 
     list.append(5)
     list.append(7)
     list.append(9)
+    list.append(11)
 
     assert list[2] == 9
     assert list.remove_at(1) == 7
+    del list[2]
     assert len(list) == 2
 
     list.append(11)
