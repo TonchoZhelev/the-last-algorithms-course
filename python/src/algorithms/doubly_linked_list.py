@@ -1,17 +1,17 @@
 from collections.abc import Generator
-from typing import Self, TypeVar, Generic, overload
+from typing import Self
 from dataclasses import dataclass
 
-T = TypeVar('T')
+# Python 3.12 allows us to use generics, without declaring TypeVars
 
 @dataclass
-class Node(Generic[T]):
+class Node[T]:
     value: T
     next: Self | None = None
     prev: Self | None = None
-    
 
-class DoublyLinkedList(Generic[T]):
+
+class DoublyLinkedList[T]:
 
     def __init__(self, *args: T):
         self._length = 0
@@ -20,11 +20,14 @@ class DoublyLinkedList(Generic[T]):
         for v in args:
             self.append(v)
 
+
     def __repr__(self) -> str:
         return f'DoublyLinkedList({", ".join(str(v) for v in self)})'
 
+
     def __len__(self) -> int:
         return self._length
+
 
     def get_node_iter(self) -> Generator[Node[T], None, None]:
         curr = self.head
@@ -32,9 +35,23 @@ class DoublyLinkedList(Generic[T]):
             yield curr
             curr = curr.next
 
+
     def __iter__(self) -> Generator[T, None, None]:
         for n in self.get_node_iter():
             yield n.value
+
+
+    def get_node_iter_reverse(self) -> Generator[Node[T], None, None]:
+        curr = self.tail
+        while curr:
+            yield curr
+            curr = curr.prev
+
+
+    def __reversed__(self) -> Generator[T, None, None]:
+        for n in self.get_node_iter_reverse():
+            yield n.value
+
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, DoublyLinkedList):
@@ -49,6 +66,7 @@ class DoublyLinkedList(Generic[T]):
 
         return True
 
+
     def get_node(self, key: int) -> Node[T]:
         if key < 0 or key >= self._length:
             raise IndexError()
@@ -60,6 +78,7 @@ class DoublyLinkedList(Generic[T]):
         # should never happen, as we've already checked at the beggining
         # but python complains otherwise
         raise IndexError()
+
 
     def __getitem__(self, key: int) -> T:
         if key < 0 or key >= self._length:
@@ -73,11 +92,14 @@ class DoublyLinkedList(Generic[T]):
         # but python complains otherwise
         raise IndexError()
 
+
     def __setitem__(self, key: int, value: T) -> None:
         self.insertAt(value, key)
 
+
     def __delitem__(self, key: int) -> T | None:
         return self.remove_at(key)
+
 
     def prepend(self, item: T) -> None:
         node = Node(value=item)
@@ -90,6 +112,7 @@ class DoublyLinkedList(Generic[T]):
         node.next = self.head
         self.head.prev = node
         self.head = node
+
 
     def insertAt(self, item: T, idx: int) -> None:
         if idx < 0 or idx >= self._length:
@@ -127,6 +150,7 @@ class DoublyLinkedList(Generic[T]):
         self.tail.next = node
         self.tail = node
 
+
     def remove_node(self, node: Node[T]) -> Node[T]:
         if self._length == 1:
             self.head = self.tail = None
@@ -150,6 +174,7 @@ class DoublyLinkedList(Generic[T]):
         self._length -= 1
         return node
 
+
     def remove(self, item: T) -> T | None:
         for curr in self.get_node_iter():
             if curr.value == item:
@@ -157,17 +182,12 @@ class DoublyLinkedList(Generic[T]):
         
         return None
 
+
     def remove_at(self, idx: int) -> T | None:
         for i, curr in enumerate(self.get_node_iter()):
             if i == idx:
                 return self.remove_node(curr).value
         
         return None
-
-
-
-
-
-
 
 
