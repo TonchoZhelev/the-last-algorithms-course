@@ -8,6 +8,15 @@ class BinaryNode[T]:
     left: Self | None = None
     right: Self | None = None
 
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, BinaryNode):
+            return False
+
+        return (self.value == other.value
+                and self.left == other.left
+                and self.right == other.right)
+
+
 
 def pre_order_search[T](head: BinaryNode[T]) -> list[T]:
     """Return a list of values from a pre-order search of the tree."""
