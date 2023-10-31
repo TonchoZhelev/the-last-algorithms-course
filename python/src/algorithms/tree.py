@@ -1,7 +1,5 @@
-from dataclasses import dataclass
-from typing import Protocol, Self, runtime_checkable
+from typing import Protocol, Self
 
-@runtime_checkable
 class Comparable(Protocol):
     def __le__(self, other,/) -> bool:
         ...
@@ -21,14 +19,15 @@ class TestFunc[T: Comparable](Protocol):
         ...
 
 
-
 class BinaryNode[T: Comparable]:
 
     def __init__(self, value: T, 
                  left: Self | None = None,
                  right: Self | None = None) -> None:
-        self.value = value
+        self.value: T = value
         self.height: int = 1
+        self.left: Self | None = None
+        self.right: Self | None = None
 
         if left:
             self.left = left
@@ -93,57 +92,74 @@ class BinaryNode[T: Comparable]:
                 self.height += 1
 
 
-    def remove(self, item: T) -> None:
-        child, parent = self.find(item)
+    # this no worky
+    def remove(self, item: T, parent: Self | None) -> bool:
+        if item != self.value:
+            match (item < self.value, self.left, self.right):
+                case (True, None, _) | (False, _, None):
+                    return False
+                case (True, child, _) | (False, _, child):
+                    if child.remove(item, self):
+                        self.height -= 1
+                        return True
+                    else:
+                        return False
+        else:
+            match (parent, self.left, self.right):
+                case (None, None, None):  # Root node width no children
+                    # there is no way to delete ourselves in this case
+                    return True
 
-        # Node not found
-        if not child or not parent:
-            return
+                case (None, child, None) | (None, None, child):  # Root node with only one child
+                    self.value = child.value
+                    self.left = child.left
+                    self.right = child.right
+                    self.height = child.height
+                    return True
 
-        match (child.left, child.right):
-            case (None, None):  # Node with no children
-                if parent.left is child:
-                    parent.left = None
-                else:
-                    parent.right = None
-            
-            case (_, None):  # Node with only left child
-                if parent.left is child:
-                    parent.left = child.left
-                else:
-                    parent.right = child.left
-            
-            case (None, _):  # Node with only right child
-                if parent.left is child:
-                    parent.left = child.right
-                else:
-                    parent.right = child.right
+                case (parent, None, None):  # Node with no children
+                    if parent.left is self:
+                        parent.left = None
+                    else:
+                        parent.right = None
+                
+                case (parent, child, None) | (parent, None, child):  # Node with only one child
+                    if parent.left is self:
+                        parent.left = child
+                    else:
+                        parent.right = child
+                
+                case (parent, left, right):
+                    if left.height >= right.height:
+                        # Replace with predecessor (largest in left subtree)
+                        largest_parent = self
+                        largest = self.left
+                        while largest.right:
+                            largest_parent = largest
+                            largest = largest.right
 
-            case (left, right) if left.height >= right.height:
-                # Replace with predecessor (largest in left subtree)
-                largest_parent = child
-                largest = child.left
-                while largest.right:
-                    largest_parent = largest
-                    largest = largest.right
+                        if largest.left:
+                            largest_parent.right = largest.left
+                        else:
+                            largest_parent.right = None
 
-                if largest.left:
-                    largest_parent.right = largest.left
+                        self.value = largest.value
+                    else:
+                        # Replace with successor (smallest in right subtree)
+                        smallest_parent = self
+                        smallest = self.right
+                        while smallest.left:
+                            smallest_parent = smallest
+                            smallest = smallest.left
 
-                child.value = largest.value
-            
-            case (left, right) if left.height < right.height:
-                # Replace with successor (smallest in right subtree)
-                smallest_parent = child
-                smallest = child.right
-                while smallest.left:
-                    smallest_parent = smallest
-                    smallest = smallest.left
+                        if smallest.right:
+                            smallest_parent.left = smallest.right
+                        else:   
+                            smallest_parent.left = None
 
-                if smallest.right:
-                    smallest_parent.left = smallest.right
-
-                child.value = smallest.value
+                        self.value = smallest.value
+           
+            return True
         
 
 def pre_order_search[T: Comparable](head: BinaryNode[T]) -> list[T]:

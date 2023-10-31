@@ -73,3 +73,11 @@ def test_breadth_first_search():
     assert breadth_first_search(tree, 45) == True
     assert breadth_first_search(tree, 7) == True
     assert breadth_first_search(tree, 69) == False
+
+def test_dfs_on_bst():
+    assert tree.find(45)[0] is not None
+    assert tree.find(7)[0] is not None
+    assert tree.find(69)[0] is None
+
+
+
